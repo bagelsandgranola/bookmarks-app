@@ -1,9 +1,39 @@
 import React from 'react';
 import Rating from '../Rating/Rating';
 import './BookmarkItem.css';
+import config from '../config';
+import BookmarksContext from '../BookmarkContext'
+
+function deleteBookmarkRequest(bookmarkId, cb) {
+  fetch(config.API_ENDPOINT + `/${bookmarkId}`, {
+    method: 'DELETE',
+    headers: {
+      'content-type': 'application/json',
+      'Authorization': `Bearer ${config.API_KEY}`
+    }
+  })
+    .then (res => {
+      if (!res.ok) {
+        return res.json().then(error => {
+          throw error
+        })
+      }
+      return res.json()
+    })
+    .then(data => {
+      console.log ({data})
+      cb(bookmarkId)
+    })
+    .catch(error => {
+      console.error(error)
+    })
+}
 
 export default function BookmarkItem(props) {
   return (
+    <BookmarksContext.Consumer>
+      { (context) => (
+
     <li className='BookmarkItem'>
       <div className='BookmarkItem__row'>
         <h3 className='BookmarkItem__title'>
@@ -22,14 +52,19 @@ export default function BookmarkItem(props) {
       <div className='BookmarkItem__buttons'>
         <button
           className='BookmarkItem__description'
-          onClick={() => props.onClickDelete(props.id)}
+          onClick={() => {
+            deleteBookmarkRequest(props.id, context.deleteBookmark)
+          }}
         >
           Delete
         </button>
       </div>
     </li>
+     )}
+  </BookmarksContext.Consumer>
   )
 }
+
 
 BookmarkItem.defaultProps = {
   onClickDelete: () => {},
