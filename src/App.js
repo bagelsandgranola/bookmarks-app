@@ -1,3 +1,21 @@
+// local bookmarks API as API_ENDPOINT 
+
+// create new Route that will contain a form for editing bookmarks
+
+// create a component that contains a form for updating bookmarks
+
+// on list of bookmarks, add button on each bookmark 
+//that links to the edit route for that bookmark
+    //use either: Link from react-router-dom
+    //or use a button that calls history.push when it's clicked
+
+// edit bookmark should submit a PATCH to bookmarks-server w/ new values
+
+// if the PATCH request is successful,
+//update bookmark stored in context with new values
+//redirect user back to the list of bookmarks 
+//
+
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import AddBookmark from './AddBookmark/AddBookmark';
@@ -6,6 +24,7 @@ import Nav from './Nav/Nav';
 import config from './config';
 import './App.css';
 import BookmarksContext from './BookmarkContext'
+import EditBookmark from './EditBookmark/EditBookmark'
 
 
 class App extends Component {
@@ -37,6 +56,17 @@ class App extends Component {
       })
   }
 
+  updateBookmark = updatedBookmark => {
+    const newBookmarks = this.state.bookmarks.map(bookmark => 
+      (bookmark.id === updatedBookmark.id)
+        ? updatedBookmark
+        : bookmark
+      )
+      this.setState({
+        bookmarks: newBookmarks
+      })
+  };
+
   componentDidMount() {
     fetch(config.API_ENDPOINT, {
       method: 'GET',
@@ -60,6 +90,7 @@ class App extends Component {
       bookmarks: this.state.bookmarks,
       addBookmark: this.addBookmark,
       deleteBookmark: this.deleteBookmark,
+      updateBookmark: this.updateBookmark,
     }
     return (
       <main className='App'>
@@ -75,6 +106,10 @@ class App extends Component {
               exact
               path='/'
               component={BookmarkList}
+            />
+            <Route
+                path ='/edit/:bookmark_id'
+                component={EditBookmark}
             />
           </div>
         </BookmarksContext.Provider>

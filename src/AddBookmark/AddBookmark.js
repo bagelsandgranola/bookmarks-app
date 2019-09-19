@@ -25,7 +25,7 @@ class AddBookmark extends Component {
       rating: rating.value,
     }
     this.setState({ error: null })
-    fetch(config.API_ENDPOINT, {
+    fetch(`http:localhost:8000/api/bookmarks`, {
       method: 'POST',
       body: JSON.stringify(bookmark),
       headers: {
@@ -52,6 +52,7 @@ class AddBookmark extends Component {
         this.props.history.push('/')
       })
       .catch(error => {
+        console.error(error)
         this.setState({ error })
       })
   }
