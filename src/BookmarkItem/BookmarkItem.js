@@ -14,16 +14,13 @@ function deleteBookmarkRequest(bookmarkId, cb) {
       'Authorization': `Bearer ${config.API_KEY}`
     }
   })
-    .then (res => {
+    .then(res => {
       if (!res.ok) {
-        return res.json().then(error => {
-          throw error
-        })
+        return res.json().then(error => Promise.reject(error))
       }
       return res.json()
     })
     .then(data => {
-      console.log ({data})
       cb(bookmarkId)
     })
     .catch(error => {

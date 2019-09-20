@@ -21,7 +21,7 @@ export default class EditBookmark extends Component {
     componentDidMount() {
         const bookmarkId = this.props.match.params.bookmarkId
 
-        fetch(`https://localhost:8000/api/bookmarks/${bookmarkId}`, {
+        fetch(`http://localhost:8000/api/bookmarks/${bookmarkId}`, {
             method: 'GET',
             headers: {
               'authorization': `Bearer ${config.API_KEY}`
@@ -51,7 +51,7 @@ export default class EditBookmark extends Component {
     handleSubmit = e => {
         e.preventDefault()
         //validation not shown
-        fetch(`https://localhost:8000/api/bookmarks/${this.props.match.params.bookmarkId}`, {
+        fetch(`http://localhost:8000/api/bookmarks/${this.props.match.params.bookmarkId}`, {
             method: 'PATCH',
             body: JSON.stringify(this.state.inputValues),
             headers: {
