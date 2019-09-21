@@ -47,7 +47,6 @@ class App extends Component {
   }
 
   deleteBookmark = bookmarkId => {
-    console.log(bookmarkId)
     const newBookmarks = this.state.bookmarks.filter(bm => 
       bm.id !== bookmarkId
       )
@@ -62,6 +61,8 @@ class App extends Component {
         ? updatedBookmark
         : bookmark
       )
+      console.log(updatedBookmark.id)
+      console.log(newBookmarks)
       this.setState({
         bookmarks: newBookmarks
       })

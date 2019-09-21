@@ -11,6 +11,7 @@ export default class EditBookmark extends Component {
     static contextType = BookmarksContext;
 
     state = {
+        id: '',
         title: '',
         url: '',
         description: '',
@@ -19,7 +20,7 @@ export default class EditBookmark extends Component {
     };
 
     componentDidMount() {
-        const bookmarkId = this.props.match.params.bookmarkId
+        const bookmarkId = this.props.match.params.bookmark_id
 
         fetch(`http://localhost:8000/api/bookmarks/${bookmarkId}`, {
             method: 'GET',
@@ -35,6 +36,7 @@ export default class EditBookmark extends Component {
         })
         .then(responseData => {
             this.setState({
+                id: responseData.id,
                 title: responseData.title,
                 url: responseData.url,
                 description: responseData.description,
@@ -48,29 +50,53 @@ export default class EditBookmark extends Component {
         })
     }
 
+    handleDescriptionChange = e => {
+      this.setState({description: e.target.value})
+    }
+
+    handleTitleChange = e => {
+      this.setState({title: e.target.value})
+    }
+
+    handleRatingChange = e => {
+      this.setState({rating: e.target.value})
+    }
+
+    handleURLChange = e => {
+      this.setState({url: e.target.value})
+    }
+
     handleSubmit = e => {
         e.preventDefault()
+        
+        const { id, title, url, description, rating} = this.state
+        const updatedBookmark = { id, title, url, description, rating}
+        console.log(updatedBookmark)
         //validation not shown
-        fetch(`http://localhost:8000/api/bookmarks/${this.props.match.params.bookmarkId}`, {
+        console.log(this.props.match.params.bookmark_id)
+        fetch(`http://localhost:8000/api/bookmarks/${this.props.match.params.bookmark_id}`, {
             method: 'PATCH',
-            body: JSON.stringify(this.state.inputValues),
+            body: JSON.stringify(updatedBookmark),
             headers: {
               'content-type': 'application/json',
               'authorization': `Bearer ${config.API_KEY}`
             },
         })
         .then(res => {
-          if (!res.ook)
+          if (!res.ok)
             return res.json().then(error => Promise.reject(error))
         })
-        .then(responseData => {
-            this.context.updateBookmark(responseData)
+        .then(() => {
+            this.context.updateBookmark(updatedBookmark)
+            this.props.history.push('/')
         })
         .catch(error => {
           console.error(error)
           this.setState({ error })
         })
     }
+
+  
     render() {
         const { error, title, url, description, rating } = this.state
         return (
@@ -95,7 +121,8 @@ export default class EditBookmark extends Component {
                   id='title'
                   placeholder='Great website!'
                   required
-                  value={title}
+                  defaultValue={title}
+                  onChange={this.handleTitleChange}
                 />
               </div>
               <div>
@@ -110,7 +137,8 @@ export default class EditBookmark extends Component {
                   id='url'
                   placeholder='https://www.great-website.com/'
                   required
-                  value={url}
+                  defaultValue={url}
+                  onChange={this.handleURLChange}
 
                 />
               </div>
@@ -122,7 +150,9 @@ export default class EditBookmark extends Component {
                   name='description'
                   id='description'
                   value={description}
-                />
+                  onChange={this.handleDescriptionChange}>
+                </textarea>
+              
               </div>
               <div>
                 <label htmlFor='rating'>
@@ -134,12 +164,11 @@ export default class EditBookmark extends Component {
                   type='number'
                   name='rating'
                   id='rating'
-                  defaultValue='1'
                   min='1'
                   max='5'
                   required
-                  value={rating}
-
+                  defaultValue={rating}
+                  onChange={this.handleRatingChange}
                 />
               </div>
               <div className='AddBookmark__buttons'>

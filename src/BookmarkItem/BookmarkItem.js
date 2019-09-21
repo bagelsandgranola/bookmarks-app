@@ -15,13 +15,13 @@ function deleteBookmarkRequest(bookmarkId, cb) {
     }
   })
     .then(res => {
+      console.log(res)
       if (!res.ok) {
+        console.log(res)
         return res.json().then(error => Promise.reject(error))
       }
-      return res.json()
-    })
-    .then(data => {
       cb(bookmarkId)
+      return res.json()
     })
     .catch(error => {
       console.error(error)
